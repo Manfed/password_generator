@@ -3,3 +3,7 @@
 # IntelliJ project files
 .idea
 *.iml
+.editorconfig
+.gitignore
+README.md
+package-lock.json
