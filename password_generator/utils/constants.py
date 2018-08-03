@@ -1,0 +1,15 @@
+import os
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+DATABASE_INIT_FILE_RELATIVE_PATH = '/../../words.txt'
+DATABASE_INIT_FILE_PATH = ROOT_DIR + DATABASE_INIT_FILE_RELATIVE_PATH
+
+CHANGE_LETTER_SIZE_CHANCE_IN_PERCENT = 50
+
+LATIN_CAPITAL_LETTERS = '[ABCDEFGHIJKLMNOPRSTUVWQXYZ]'
+LATIN_SMALL_LETTERS = '[abcdefghijklmnoprstuvwqxyz]'
+POLISH_CAPITAL_LETTERS = '[ĄĆĘŁŃŚÓŻŹ]'
+POLISH_SMALL_LETTERS = '[ąćęłńśóżź]'
+DIGITS = '[0123456789]'
+SPECIAL_CHARACTERS = '[!@#$%^&*()-=+_;:\'"/\,.<>[\]{}]'

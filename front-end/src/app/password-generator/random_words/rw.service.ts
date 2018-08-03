@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { RCResponse } from './model/rcresponse';
-import { RCModel } from './model/rcmodel';
+import { RWRequest } from './model/rwrequest';
+import { RWResponse } from './model/rwresponse';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -12,12 +12,12 @@ const httpOptions = {
 };
 
 @Injectable()
-export class RCService {
+export class RWService {
 
   constructor(private http: HttpClient) { }
 
-  getRandomCharactersPassword(url: string, data: RCModel) {
-    return this.http.post<RCResponse>(url.concat('/random/characters'), data, httpOptions)
+  getRandomWordsPassword(url: string, data: RWRequest) {
+    return this.http.post<RWResponse>(url.concat('/random/words'), data, httpOptions)
       .pipe(
         catchError(this.handleErrorObservable)
       );

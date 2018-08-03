@@ -3,16 +3,28 @@
 from flask import Flask
 from flask_cors import CORS
 
+from password_generator.api.words_from_song import random_words_from_song_generator
+from password_generator.database.database import db_session, init_db
 from password_generator.api.random_characters_generator import random_generator
+from password_generator.api.random_words_generator import random_words_generator
 
 app = Flask(__name__)
 CORS(app)
 
 app.register_blueprint(random_generator, url_prefix='/random/')
+app.register_blueprint(random_words_generator, url_prefix='/random/')
+app.register_blueprint(random_words_from_song_generator, url_prefix='/random')
 
 def main():
     print("Started")
+    init_db()
+    print("DB started")
     app.run(port=8080, host='0.0.0.0')
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
 
 
 if __name__ == "__main__":

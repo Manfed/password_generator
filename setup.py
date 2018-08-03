@@ -8,7 +8,9 @@ setup(name='password_generator',
       packages=find_packages(exclude=["test/", "bin/"]),
       install_requires=[
             'flask==1.0.2',
-            'flask-cors==3.0.6'
+            'flask-cors==3.0.6',
+            'Flask-SQLAlchemy==2.3.2',
+            'lxml==4.2.3'
       ],
       scripts=['bin/start_generator.py']
 )
