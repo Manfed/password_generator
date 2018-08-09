@@ -10,7 +10,9 @@ setup(name='password_generator',
             'flask==1.0.2',
             'flask-cors==3.0.6',
             'Flask-SQLAlchemy==2.3.2',
-            'lxml==4.2.3'
+            'lxml==4.2.3',
+            'apscheduler==3.5.1',
+            'flasgger==0.5.14'
       ],
       scripts=['bin/start_generator.py']
 )

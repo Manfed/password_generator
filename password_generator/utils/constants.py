@@ -13,3 +13,18 @@ POLISH_CAPITAL_LETTERS = '[ĄĆĘŁŃŚÓŻŹ]'
 POLISH_SMALL_LETTERS = '[ąćęłńśóżź]'
 DIGITS = '[0123456789]'
 SPECIAL_CHARACTERS = '[!@#$%^&*()-=+_;:\'"/\,.<>[\]{}]'
+
+# E-mail account settings
+GMAIL_USERNAME = 'pg.master.thesis.pass.gen@gmail.com'
+GMAIL_PASSWORD = 'M@rcln1!'
+FEEDBACK_FORM_URL = 'https://goo.gl/forms/W6wB9cbW12V1DeOo1'
+MAIL_SUBJECT = 'Check how do you remember passwords after %d day(s)'
+MAIL_CONTENT = """
+    Hi,
+    thank you for participating in the study of the possibility of memorizing passwords.
+    Here you can find the form with the questions checking your password memory: %s.
+    
+    Your ID is: %s
+    
+    Cheers!
+"""

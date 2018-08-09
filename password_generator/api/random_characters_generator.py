@@ -10,6 +10,45 @@ random_generator = Blueprint('random_generator', __name__)
 
 @random_generator.route('/characters', methods=['POST'])
 def random_generator_func():
+    """
+    Create a password using random characters.
+    ---
+    tags:
+        - Password from random characters
+    parameters:
+      - name: length
+        in: body
+        type: integer
+        required: true
+        description: Password length.
+      - name: groups
+        in: body
+        type: array
+        items:
+            type: object
+            properties:
+                value:
+                    type: string
+        required: true
+        description: Character groups using in password composition.
+    responses:
+      500:
+        description: Internal Server Error.
+      200:
+        description: Password generated.
+        schema:
+          id: rcResponse
+          properties:
+            entropy:
+              type: integer
+              description: The entropy of the password.
+            isSafe:
+              type: boolean
+              description: Password safety checked in the haveibeenpwned service.
+            password:
+              type: string
+              description: Generated password.
+        """
     effective_characters = set()
     effective_groups = []
 

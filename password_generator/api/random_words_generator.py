@@ -14,6 +14,62 @@ random_words_generator = Blueprint('random_words_generator', __name__)
 
 @random_words_generator.route('/words', methods=['POST'])
 def random_words_func_post():
+    """
+    Create a password using random words.
+    ---
+    tags:
+        - Password from random words
+    parameters:
+      - name: passwordLength
+        in: body
+        type: integer
+        required: true
+        description: Password length.
+      - name: mappings
+        in: body
+        type: array
+        items:
+            type: object
+            properties:
+                character:
+                    type: string
+                mapping:
+                    type: string
+                chance:
+                    type: integer
+        required: true
+        description: Character mapping rules.
+      - name: rwCase
+        in: body
+        type: string
+        enum: [random, camel, words]
+        required: true
+        description: Words case strategy.
+    responses:
+      500:
+        description: Internal Server Error.
+      200:
+        description: Password generated.
+        schema:
+          id: rwResponse
+          properties:
+            passwordWords:
+              type: array
+              items:
+                type: string
+              description: Modified password words.
+            entropy:
+              type: integer
+              description: The entropy of the password.
+            used_words:
+              type: array
+              items:
+                type: string
+              description: Words used to create a password.
+            isSafe:
+              type: boolean
+              description: Password safety checked in the haveibeenpwned service.
+    """
     data = request.get_json()
 
     password_length = data['passwordLength']

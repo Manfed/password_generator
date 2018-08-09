@@ -30,6 +30,75 @@ def handle_invalid_artist(error):
 
 @random_words_from_song_generator.route('/song', methods=['POST'])
 def generate_password_from_song_lyrics():
+    """
+    Create a password using song lyrics.
+    ---
+    tags:
+        - Password from song lyrics
+    parameters:
+      - name: passwordLength
+        in: body
+        type: integer
+        required: true
+        description: Password length.
+      - name: mappings
+        in: body
+        type: array
+        items:
+            type: object
+            properties:
+                character:
+                    type: string
+                mapping:
+                    type: string
+                chance:
+                    type: integer
+        required: true
+        description: Character mapping rules.
+      - name: rwCase
+        in: body
+        type: string
+        enum: [random, camel, words]
+        required: true
+        description: Words case strategy.
+      - name: artist
+        in: body
+        type: string
+        required: true
+        description: Artist who's song will be used.
+    responses:
+      500:
+        description: Internal Server Error.
+      404:
+        description: Song not found.
+      200:
+        description: Password generated.
+        schema:
+          id: rwfsResponse
+          properties:
+            password_words:
+              type: array
+              items:
+                type: string
+              description: Modified password words.
+            entropy:
+              type: integer
+              description: The entropy of the password.
+            used_words:
+              type: array
+              items:
+                type: string
+              description: Words used to create a password.
+            isSafe:
+              type: boolean
+              description: Password safety checked in the haveibeenpwned service.
+            lyrics:
+              type: string
+              description: Song's lyrics.
+            song_name:
+              type: string
+              description: Song name.
+    """
     data = request.get_json()
 
     password_length = data['passwordLength']

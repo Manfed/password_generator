@@ -4,3 +4,5 @@ Flask-SQLAlchemy==2.3.2
 git+https://github.com/Manfed/PyLyrics
 lxml==4.2.3
 git+https://github.com/cmccandless/safepass
+apscheduler==3.5.1
+flasgger==0.5.14
