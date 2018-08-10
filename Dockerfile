@@ -14,4 +14,6 @@ ADD ./ ./
 
 RUN python3 -m pip install -U .
 
+ENV DATABASE_FILE /pg/words.txt
+
 ENTRYPOINT start_generator.py
