@@ -1,10 +1,8 @@
 version: '3'
 services:
-  generator:
-    build: .
+  password_generator-server:
+    image: "marckruszynski/password_generator-server"
+  password_generator-frontend:
+    image: "marckruszynski/password_generator-frontend"
     ports:
-     - "8080:8080"
-  redis:
-    image: "postgres"
-    ports:
-     - "5432:5432"
+      - "4200:4200"
