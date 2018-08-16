@@ -21,7 +21,7 @@ SPECIAL_CHARACTERS = '[!@#$%^&*()-=+_;:\'"/\,.<>[\]{}]'
 
 # E-mail account settings
 GMAIL_USERNAME = 'pg.master.thesis.pass.gen@gmail.com'
-GMAIL_PASSWORD = ''
+GMAIL_PASSWORD = os.getenv('GMAIL_PASSWORD')
 FEEDBACK_FORM_URL = 'https://goo.gl/forms/W6wB9cbW12V1DeOo1'
 MAIL_SUBJECT = 'Check how do you remember passwords after %d day(s)'
 MAIL_CONTENT = """

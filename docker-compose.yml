@@ -2,7 +2,11 @@ version: '3'
 services:
   password_generator-server:
     image: "marckruszynski/password_generator-server"
+    environment:
+      - GMAIL_PASSWORD=password
   password_generator-frontend:
     image: "marckruszynski/password_generator-frontend"
     ports:
-      - "127.0.0.1:4200:4200"
+      - "4200:4200"
+    links:
+      - "password_generator-server:server"
