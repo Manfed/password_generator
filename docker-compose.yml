@@ -5,4 +5,4 @@ services:
   password_generator-frontend:
     image: "marckruszynski/password_generator-frontend"
     ports:
-      - "127.0.0.1:4200:4200"
+      - "4200:4200"
