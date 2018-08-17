@@ -8,3 +8,15 @@
 README.md
 package-lock.json
 generator.db
+password_generator/__init__.pyc
+password_generator/__pycache__/
+password_generator/api/__init__.pyc
+password_generator/api/__pycache__/
+password_generator/api/commons/__pycache__/
+password_generator/database/__pycache__/
+password_generator/database/model/__pycache__/
+password_generator/email/__pycache__/
+password_generator/email/email_service/__pycache__/
+password_generator/metrics/__pycache__/
+password_generator/scheduler/__pycache__/
+password_generator/utils/__pycache__/
