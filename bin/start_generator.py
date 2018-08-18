@@ -12,7 +12,7 @@ from password_generator.api.random_words_generator import random_words_generator
 from password_generator.scheduler.scheduler import init_scheduler
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, send_wildcard=True)
 Swagger(app)
 
 app.register_blueprint(random_generator, url_prefix='/random/')
