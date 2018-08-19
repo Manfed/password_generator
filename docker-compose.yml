@@ -6,10 +6,6 @@ services:
       - GMAIL_PASSWORD=password
   password_generator-frontend:
     image: "marckruszynski/password_generator-frontend"
-    ports:
-      - "4200:4200"
-    links:
-      - "password_generator-server:server"
   nginx:
     image: "nginx"
     depends_on:
@@ -17,8 +13,8 @@ services:
       - password_generator-frontend
     links:
       - "password_generator-server:server"
+      - "password_generator-frontend:frontend"
     volumes:
-      - shared:/usr/share/nginx/html
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "8080:80"
