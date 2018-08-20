@@ -18,5 +18,3 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "8080:80"
-volumes:
-  shared: {}

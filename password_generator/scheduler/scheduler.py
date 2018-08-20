@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timedelta
 from time import tzname
 
@@ -28,10 +29,12 @@ def init_scheduler():
 
 
 def schedule_test(email: str, uuid: str):
+    logger = logging.getLogger('scheduler')
     current_time = datetime.now()
     if not __scheduler.running:
         init_scheduler()
 
+    logger.info('Scheduling job at {:%Y-%m-%d %H:%M:%S} %s'.format(current_time, tzname[0]))
     __scheduler.add_job(send_mail, 'date', run_date=current_time + timedelta(seconds=1),
                         timezone=tzname[0], args=[email, uuid, 1])
     __scheduler.add_job(send_mail, 'date', run_date=current_time + timedelta(seconds=3),
