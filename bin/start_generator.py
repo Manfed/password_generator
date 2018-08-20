@@ -15,10 +15,10 @@ app = Flask(__name__)
 CORS(app, send_wildcard=True)
 Swagger(app)
 
-app.register_blueprint(random_generator, url_prefix='api/random/')
-app.register_blueprint(random_words_generator, url_prefix='api/random/')
-app.register_blueprint(random_words_from_song_generator, url_prefix='api/random')
-app.register_blueprint(test_module, url_prefix='api/test')
+app.register_blueprint(random_generator, url_prefix='/api/random/')
+app.register_blueprint(random_words_generator, url_prefix='/api/random/')
+app.register_blueprint(random_words_from_song_generator, url_prefix='/api/random')
+app.register_blueprint(test_module, url_prefix='/api/test')
 
 
 def main():
