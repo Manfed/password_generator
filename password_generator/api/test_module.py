@@ -18,11 +18,6 @@ def add_data_to_test_module():
     tags:
         - Schedule test
     parameters:
-      - name: random_characters_password
-        in: body
-        type: string
-        required: true
-        description: Password built using random characters.
       - name: random_words_password
         in: body
         type: string
@@ -48,22 +43,19 @@ def add_data_to_test_module():
     """
     data = request.get_json()
 
-    random_characters_password = data['random_characters_password']
     random_words_password = data['random_words_password']
     song_password = data['song_password']
     email = data['email']
 
     test_uuid = str(uuid.uuid4())
-    __add_test_to_db(test_uuid, random_characters_password, random_words_password, song_password)
+    __add_test_to_db(test_uuid, random_words_password, song_password)
     __schedule_test_mails(test_uuid, email)
 
     return jsonify(True), 201
 
 
-def __add_test_to_db(test_uuid: str, random_characters_password: str,
-                     random_words_password: str, song_password: str):
-    db_session.add(TestData(test_uuid, random_characters_password,
-                            random_words_password, song_password))
+def __add_test_to_db(test_uuid: str, random_words_password: str, song_password: str):
+    db_session.add(TestData(test_uuid, random_words_password, song_password))
     db_session.commit()
 
 

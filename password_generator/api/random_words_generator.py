@@ -7,6 +7,7 @@ from sqlalchemy import func
 from password_generator.api.commons.common_functions import apply_mappings, apply_case
 from password_generator.database.database import db_session
 from password_generator.database.model.word import Word
+from password_generator.metrics.cracking_time import count_cracking_time
 from password_generator.metrics.entropy import count_entropy, count_alphabet_size
 
 random_words_generator = Blueprint('random_words_generator', __name__)
@@ -58,10 +59,10 @@ def random_words_func_post():
               items:
                 type: string
               description: Modified password words.
-            entropy:
+            crackingTime:
               type: integer
-              description: The entropy of the password.
-            used_words:
+              description: Time needed to crack the password.
+            usedWords:
               type: array
               items:
                 type: string
@@ -89,9 +90,8 @@ def random_words_func_post():
     password = ''.join(password_words)
     return jsonify({
         'passwordWords': password_words,
-        'entropy': count_entropy(count_alphabet_size(password),
-                                 len(password)),
-        'used_words': used_words,
+        'crackingTime': count_cracking_time(password),
+        'usedWords': used_words,
         'isSafe': safepass(password)
     })
 

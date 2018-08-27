@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
-from password_generator.utils.constants import DATABASE_INIT_FILE_PATH
+from password_generator.utils.constants import DATABASE_INIT_FILE_PATH, MINIMAL_RANDOM_WORD_LENGTH
 
 engine = create_engine('sqlite:///../generator.db', convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
@@ -26,5 +26,7 @@ def __init_db_from_file():
     from password_generator.database.model.word import Word
     with open(DATABASE_INIT_FILE_PATH) as file:
         for line in file:
-            db_session.add(Word(line.strip()))
+            word = line.strip()
+            if len(word) >= MINIMAL_RANDOM_WORD_LENGTH:
+                db_session.add(Word(word))
         db_session.commit()

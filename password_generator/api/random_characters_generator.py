@@ -3,6 +3,7 @@ from random import randint
 
 from safepass import safepass
 
+from password_generator.metrics.cracking_time import count_cracking_time_for_entropy
 from password_generator.metrics.entropy import count_entropy
 
 random_generator = Blueprint('random_generator', __name__)
@@ -39,9 +40,9 @@ def random_generator_func():
         schema:
           id: rcResponse
           properties:
-            entropy:
+            crackingTime:
               type: integer
-              description: The entropy of the password.
+              description: Time needed to crack the password.
             isSafe:
               type: boolean
               description: Password safety checked in the haveibeenpwned service.
@@ -63,9 +64,9 @@ def random_generator_func():
         effective_characters = effective_characters.union(distinct_values)
 
     password = __generate_password__(password_length=password_length, character_groups=effective_groups)
+    entropy = count_entropy(alphabet_length=len(effective_characters), password_length=password_length)
     return jsonify({'password': password,
-                    'entropy': count_entropy(alphabet_length=len(effective_characters),
-                                             password_length=password_length),
+                    'crackingTime': count_cracking_time_for_entropy(entropy),
                     'isSafe': safepass(password)
                     })
 

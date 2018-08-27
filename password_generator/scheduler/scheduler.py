@@ -8,7 +8,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
 
-from password_generator.email.email_service.gmail_service import send_mail
+from password_generator.email.email_service.gmail_service import send_test_mail, send_mail
+from password_generator.utils.constants import TEST_SCHEDULED_MAIL_SUBJECT, TEST_SCHEDULED_MAIL_CONTENT, \
+    GENERATOR_FEEDBACK_FORM, GMAIL_USERNAME
 
 __jobstores = {
     'default': SQLAlchemyJobStore(url='sqlite:///../generator.db')
@@ -34,10 +36,13 @@ def schedule_test(email: str, uuid: str):
     if not __scheduler.running:
         init_scheduler()
 
+    send_mail(TEST_SCHEDULED_MAIL_SUBJECT, TEST_SCHEDULED_MAIL_CONTENT % GENERATOR_FEEDBACK_FORM,
+              GMAIL_USERNAME, email)
+
     logger.info('Scheduling job at {:%Y-%m-%d %H:%M:%S} %s'.format(current_time, tzname[0]))
-    __scheduler.add_job(send_mail, 'date', run_date=current_time + timedelta(days=1),
+    __scheduler.add_job(send_test_mail, 'date', run_date=current_time + timedelta(days=1),
                         timezone=tzname[0], args=[email, uuid, 1])
-    __scheduler.add_job(send_mail, 'date', run_date=current_time + timedelta(days=3),
+    __scheduler.add_job(send_test_mail, 'date', run_date=current_time + timedelta(days=3),
                         timezone=tzname[0], args=[email, uuid, 3])
-    __scheduler.add_job(send_mail, 'date', run_date=current_time + timedelta(days=7),
+    __scheduler.add_job(send_test_mail, 'date', run_date=current_time + timedelta(days=7),
                         timezone=tzname[0], args=[email, uuid, 7])

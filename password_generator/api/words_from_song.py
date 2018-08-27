@@ -1,17 +1,16 @@
 import json
 import re
 
-from collections import defaultdict
 from flask import Blueprint, jsonify, request, abort
 from PyLyrics import PyLyrics
-from random import choice, randint, shuffle
+from random import choice
 
 from safepass import safepass
 
 from password_generator.api.commons.common_functions import apply_mappings, apply_case
 from password_generator.database.database import db_session
 from password_generator.database.model.album import Album as DbAlbum
-from password_generator.metrics.entropy import count_entropy, count_alphabet_size
+from password_generator.metrics.cracking_time import count_cracking_time
 
 random_words_from_song_generator = Blueprint('random_generator_from_songs', __name__)
 
@@ -28,6 +27,52 @@ def handle_invalid_artist(error):
     return response
 
 
+@random_words_from_song_generator.route('/lyrics/<artistName>', methods=['GET'])
+def get_song_lyrics(artistName):
+    """
+    Get the lyrics of random song of the given artist.
+    ---
+    tags:
+        - Get song lyrics
+    parameters:
+        - name: artist
+          in: path
+          type: string
+          required: true
+          description: Artist name
+    responses:
+      500:
+        description: Internal Server Error.
+      404:
+        description: Song not found.
+      200:
+        description: Song's lyrics fetched successfully.
+        schema:
+            id: lyrics
+            properties:
+              lyrics:
+                type: array
+                items:
+                  type: string
+                description: Modified password words.
+              song_name:
+                type: string
+                description: Song name.
+    """
+    albums = __get_albums(artistName)
+
+    if albums is not None:
+        album = choice(albums)
+        track = choice(album.tracks())
+        lyrics = track.getLyrics()
+        return jsonify({
+            'lyrics': lyrics.splitlines(),
+            'song_name': track.name
+        })
+    else:
+        abort(404)
+
+
 @random_words_from_song_generator.route('/song', methods=['POST'])
 def generate_password_from_song_lyrics():
     """
@@ -36,11 +81,6 @@ def generate_password_from_song_lyrics():
     tags:
         - Password from song lyrics
     parameters:
-      - name: passwordLength
-        in: body
-        type: integer
-        required: true
-        description: Password length.
       - name: mappings
         in: body
         type: array
@@ -55,36 +95,34 @@ def generate_password_from_song_lyrics():
                     type: integer
         required: true
         description: Character mapping rules.
-      - name: rwCase
+      - name: casingRule
         in: body
         type: string
         enum: [random, camel, words]
         required: true
         description: Words case strategy.
-      - name: artist
+      - name: songLine
         in: body
         type: string
         required: true
-        description: Artist who's song will be used.
+        description: The sentence which should be transformed into a password.
     responses:
       500:
         description: Internal Server Error.
-      404:
-        description: Song not found.
       200:
         description: Password generated.
         schema:
           id: rwfsResponse
           properties:
-            password_words:
+            passwordWords:
               type: array
               items:
                 type: string
               description: Modified password words.
-            entropy:
+            crackingTime:
               type: integer
-              description: The entropy of the password.
-            used_words:
+              description: Time needed to crack the password.
+            usedWords:
               type: array
               items:
                 type: string
@@ -92,43 +130,26 @@ def generate_password_from_song_lyrics():
             isSafe:
               type: boolean
               description: Password safety checked in the haveibeenpwned service.
-            lyrics:
-              type: string
-              description: Song's lyrics.
-            song_name:
-              type: string
-              description: Song name.
     """
     data = request.get_json()
 
-    password_length = data['passwordLength']
     mappings = data['mappings']
-    case_mode = data['rwCase']
-    artist = data['artist']
+    case_mode = data['casingRule']
+    song_line = data['songLine']
 
-    albums = __get_albums(artist)
+    lyrics_words = __parse_lyrics_line(song_line)
 
-    if albums is not None:
-        album = choice(albums)
-        track = choice(album.tracks())
-        lyrics = track.getLyrics()
-        used_words = __choose_words_from_lyrics(lyrics, password_length)
+    password_words = apply_mappings(mappings, lyrics_words)
+    password_words = apply_case(password_words, case_mode)
 
-        password_words = apply_mappings(mappings, used_words)
-        password_words = apply_case(password_words, case_mode)
+    password = ''.join(password_words)
 
-        password = ''.join(password_words)
-
-        return jsonify({
-            'used_words': used_words,
-            'password_words': password_words,
-            'entropy': count_entropy(count_alphabet_size(password), len(password)),
-            'lyrics': lyrics,
-            'song_name': track.name,
-            'isSafe': safepass(password)
-        })
-    else:
-        abort(404)
+    return jsonify({
+        'usedWords': lyrics_words,
+        'passwordWords': password_words,
+        'crackingTime': count_cracking_time(password),
+        'isSafe': safepass(password)
+    })
 
 
 def __get_albums(artist):
@@ -153,31 +174,25 @@ def __get_album_from_wikia(artist):
     return PyLyrics.getAlbums(singer=artist)
 
 
-def __choose_words_from_lyrics(lyrics, password_length):
-    """
-    Chooses random words from the song lyrics.
-
-    :param lyrics: song lyrics
-    :param password_length: targeted password length
-    :return: a list of used words and the number of distinct words in the song
-    """
-    used_words = []
-    remained_characters = password_length
-    cleaned_lyrics = set(re.sub("[^\w]", " ", lyrics).upper().split())
-
-    distinct_words_by_length = defaultdict(list)
-    for word in cleaned_lyrics:
-        distinct_words_by_length[len(word)].append(word)
-
-    min_word_length = min(distinct_words_by_length.keys())
-    max_word_length = max(distinct_words_by_length.keys())
-
-    while remained_characters > 0:
-        word_length = randint(min_word_length, min(max_word_length, remained_characters))
-        if word_length == password_length:
-            word_length = randint(min_word_length, word_length - min_word_length)
-        if word_length in distinct_words_by_length:
-            used_words.append(choice(distinct_words_by_length[word_length]))
-            remained_characters -= word_length
-    shuffle(used_words)
-    return used_words
+def __parse_lyrics_line(song_line):
+    # used_words = []
+    # remained_characters = password_length
+    # cleaned_lyrics = set(re.sub("[^\w]", " ", lyrics).upper().split())
+    #
+    # distinct_words_by_length = defaultdict(list)
+    # for word in cleaned_lyrics:
+    #     distinct_words_by_length[len(word)].append(word)
+    #
+    # min_word_length = min(distinct_words_by_length.keys())
+    # max_word_length = max(distinct_words_by_length.keys())
+    #
+    # while remained_characters > 0:
+    #     word_length = randint(min_word_length, min(max_word_length, remained_characters))
+    #     if word_length == password_length:
+    #         word_length = randint(min_word_length, word_length - min_word_length)
+    #     if word_length in distinct_words_by_length:
+    #         used_words.append(choice(distinct_words_by_length[word_length]))
+    #         remained_characters -= word_length
+    # shuffle(used_words)
+    # return used_words
+    return list(re.sub("[^\w]", " ", song_line).upper().split())
