@@ -26,7 +26,7 @@ def send_mail(subject: str, content: str, sender: str, recipient: str):
             server.send_message(message)
             logger.info('Mail has been sent.')
     except:
-        print('Unable to send an email to %s' % to)
+        logger.error('Unable to send an email to %s' % recipient)
 
 
 def __create_message(to: str, days: int, uuid: str):

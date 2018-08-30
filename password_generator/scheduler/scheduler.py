@@ -21,9 +21,11 @@ __executors = {
 }
 __job_defaults = {
     'coalesce': False,
-    'max_instances': 3
+    'max_instances': 3,
+    'misfire_grace_time': 15 * 60
 }
-__scheduler = BackgroundScheduler(jobstores=__jobstores, executors=__executors, job_defaults=__job_defaults, timezone=utc)
+__scheduler = BackgroundScheduler(jobstores=__jobstores, executors=__executors,
+                                  job_defaults=__job_defaults, timezone=utc,)
 
 
 def init_scheduler():
