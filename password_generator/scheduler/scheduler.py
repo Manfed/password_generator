@@ -45,11 +45,11 @@ def schedule_test(email: str, uuid: str, random_words_password: str, song_passwo
               GMAIL_USERNAME, email)
 
     logger.info('Scheduling job at {:%Y-%m-%d %H:%M:%S} %s'.format(current_time, tzname[0]))
-    __scheduler.add_job(send_test_mail, 'date', run_date=current_time + timedelta(seconds=1),
+    __scheduler.add_job(send_test_mail, 'date', run_date=current_time + timedelta(days=1),
                         timezone=tzname[0], args=[email, uuid, 1])
-    __scheduler.add_job(send_test_mail, 'date', run_date=current_time + timedelta(seconds=3),
+    __scheduler.add_job(send_test_mail, 'date', run_date=current_time + timedelta(days=3),
                         timezone=tzname[0], args=[email, uuid, 3])
-    __scheduler.add_job(send_test_mail, 'date', run_date=current_time + timedelta(seconds=7),
+    __scheduler.add_job(send_test_mail, 'date', run_date=current_time + timedelta(days=7),
                         timezone=tzname[0], args=[email, uuid, 7])
 
 
