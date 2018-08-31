@@ -49,4 +49,8 @@ TEST_SCHEDULED_MAIL_CONTENT = """
     You can find it here: %s
     
     Cheers!
+    
+    PS Here you have small tips regarding your passwords:
+    Password created from random words: %s
+    Password created from song's verse: %s
 """

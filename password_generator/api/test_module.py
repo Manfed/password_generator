@@ -49,7 +49,7 @@ def add_data_to_test_module():
 
     test_uuid = str(uuid.uuid4())
     __add_test_to_db(test_uuid, random_words_password, song_password)
-    __schedule_test_mails(test_uuid, email)
+    __schedule_test_mails(test_uuid, email, random_words_password, song_password)
 
     return jsonify(True), 201
 
@@ -59,5 +59,5 @@ def __add_test_to_db(test_uuid: str, random_words_password: str, song_password: 
     db_session.commit()
 
 
-def __schedule_test_mails(test_uuid: str, email: str):
-    scheduler.schedule_test(email, test_uuid)
+def __schedule_test_mails(test_uuid: str, email: str, random_words_password: str, song_password: str):
+    scheduler.schedule_test(email, test_uuid, random_words_password, song_password)
