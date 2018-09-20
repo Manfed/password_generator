@@ -18,12 +18,12 @@ def add_data_to_test_module():
     tags:
         - Schedule test
     parameters:
-      - name: random_words_password
+      - name: randomWordsPassword
         in: body
         type: string
         required: true
         description: Password built using random words.
-      - name: song_password
+      - name: songPassword
         in: body
         type: string
         required: true

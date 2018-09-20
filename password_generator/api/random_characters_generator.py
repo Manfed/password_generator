@@ -41,7 +41,7 @@ def random_generator_func():
           id: rcResponse
           properties:
             crackingTime:
-              type: integer
+              type: string
               description: Time needed to crack the password.
             isSafe:
               type: boolean
